@@ -7,9 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AuthSystemApplication {
 
     public static void main(String[] args) {
-
-//        hell
         SpringApplication.run(AuthSystemApplication.class, args);
     }
-
 }
