@@ -5,9 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class AuthResponse {
+public class ApiResponse<T> {
     private String message;
-    private String username;
-    private String token;
-    private String role;
+    private T data;
 }
