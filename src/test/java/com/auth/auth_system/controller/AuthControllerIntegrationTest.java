@@ -28,12 +28,6 @@ class AuthControllerIntegrationTest {
     @MockBean
     private AuthService authService;
 
-    @MockBean
-    private org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate;
-
-    @MockBean
-    private org.springframework.data.redis.connection.RedisConnectionFactory redisConnectionFactory;
-
     @Autowired
     private ObjectMapper objectMapper;
 
