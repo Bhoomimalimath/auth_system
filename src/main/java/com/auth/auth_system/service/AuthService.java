@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class AuthService {
 
@@ -19,9 +17,12 @@ public class AuthService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private TokenService tokenService;
+
     public User registerUser(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new RuntimeException("Username already exists");
+            throw new com.auth.auth_system.exception.AuthException("Username already exists");
         }
 
         User user = new User();
@@ -32,14 +33,19 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public User loginUser(LoginRequest request) {
+    public String loginUser(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new com.auth.auth_system.exception.AuthException("User not found"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            throw new com.auth.auth_system.exception.AuthException("Invalid password");
         }
 
-        return user;
+        return tokenService.generateToken(user);
+    }
+
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new com.auth.auth_system.exception.AuthException("User not found"));
     }
 }
