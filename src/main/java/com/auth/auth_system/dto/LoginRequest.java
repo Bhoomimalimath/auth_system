@@ -1,6 +1,9 @@
 package com.auth.auth_system.dto;
 
+import lombok.Data;
+
+@Data
 public class LoginRequest {
-    public String email;
-    public String password;
+    private String username;
+    private String password;
 }

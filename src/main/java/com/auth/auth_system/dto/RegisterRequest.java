@@ -2,9 +2,9 @@ package com.auth.auth_system.dto;
 
 import lombok.Data;
 
-
+@Data
 public class RegisterRequest {
-    public String email;
-    public String phone;
-    public String password;
+    private String username;
+    private String password;
+    private String role;
 }

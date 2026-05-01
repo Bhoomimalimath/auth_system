@@ -1,12 +1,12 @@
 package com.auth.auth_system.controller;
 
-import com.auth.auth_system.dto.RegisterRequest;
+import com.auth.auth_system.dto.AuthResponse;
 import com.auth.auth_system.dto.LoginRequest;
+import com.auth.auth_system.dto.RegisterRequest;
 import com.auth.auth_system.model.User;
-import com.auth.auth_system.repository.UserRepository;
-
+import com.auth.auth_system.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,60 +14,30 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     @Autowired
-    private UserRepository userRepository;
+    private AuthService authService;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+        try {
+            User user = authService.registerUser(request);
+            return ResponseEntity.ok(new AuthResponse("Registration successful", user.getUsername()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(new AuthResponse(e.getMessage(), null));
+        }
+    }
 
-    // ✅ TEST API
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+        try {
+            User user = authService.loginUser(request);
+            return ResponseEntity.ok(new AuthResponse("Login successful", user.getUsername()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).body(new AuthResponse(e.getMessage(), null));
+        }
+    }
+
     @GetMapping("/test")
     public String test() {
-        return "App is working!";
-    }
-    //@PostMapping("/register")
-    //public String register(@RequestBody RegisterRequest request) {
-      //  return "CHECK RESPONSE WORKING";
-    //}
-
-    // ✅ REGISTER
-    @PostMapping("/register")
-    public String register(@RequestBody RegisterRequest request) {
-
-        User user = new User();
-        user.setEmail(request.email);
-        user.setPhone(request.phone);
-
-        // IMPORTANT: encrypt password
-        user.setPassword(passwordEncoder.encode(request.password));
-
-        userRepository.save(user);
-
-        return "User saved: " + request.email;
-    }
-
-    // ✅ LOGIN (this is Step 3)
-    @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
-
-        System.out.println("Login API called");
-        System.out.println("Email: " + request.email);
-
-        User user = userRepository.findByEmail(request.email).orElse(null);
-
-        if (user == null) {
-            return "User not found";
-        }
-
-        System.out.println("User found");
-
-        if (request.password == null || user.getPassword() == null) {
-            return "Password is null";
-        }
-
-        if (!passwordEncoder.matches(request.password, user.getPassword())) {
-            return "Invalid password";
-        }
-
-        return "Login successful";
+        return "Auth system is running!";
     }
 }
