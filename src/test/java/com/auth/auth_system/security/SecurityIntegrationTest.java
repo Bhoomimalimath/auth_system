@@ -23,12 +23,6 @@ class SecurityIntegrationTest {
     @Autowired
     private TokenService tokenService;
 
-    @MockBean
-    private org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate;
-
-    @MockBean
-    private org.springframework.data.redis.connection.RedisConnectionFactory redisConnectionFactory;
-
     @Test
     void accessProtectedWithoutToken_Returns401() throws Exception {
         mockMvc.perform(get("/user/profile"))
